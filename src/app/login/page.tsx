@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, getStoredUser } from '@/lib/salonApi';
 import { SalonLogo } from '@/components/SalonLogo';
-import { Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, User, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('beardlounge');
-  const [password, setPassword] = useState('Beard@123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -67,9 +68,10 @@ export default function LoginPage() {
             <input
               type="text"
               required
+              autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder="Enter username"
               className="w-full px-3 py-2 text-sm bg-[#0b0f17] border border-white/10 rounded-lg focus:outline-none focus:border-[#d4af37] text-white placeholder:text-gray-600 transition-colors"
             />
           </div>
@@ -78,14 +80,26 @@ export default function LoginPage() {
             <label className="block text-[11px] font-medium uppercase tracking-wider text-[#d4af37] mb-1.5 flex items-center gap-1.5">
               <Lock size={13} /> Password
             </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-3 py-2 text-sm bg-[#0b0f17] border border-white/10 rounded-lg focus:outline-none focus:border-[#d4af37] text-white placeholder:text-gray-600 transition-colors"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full px-3 py-2 pr-10 text-sm bg-[#0b0f17] border border-white/10 rounded-lg focus:outline-none focus:border-[#d4af37] text-white placeholder:text-gray-600 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#d4af37] p-1 transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
 
           <button
@@ -103,35 +117,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Quick Logins */}
-        <div className="pt-4 border-t border-white/10 text-center space-y-2">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest block">Quick Demo Login</span>
-          <div className="flex items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setUsername('admin');
-                setPassword('admin@123');
-              }}
-              className="text-xs px-2.5 py-1 rounded bg-[#0b0f17] border border-white/10 hover:border-[#d4af37]/40 text-gray-400 hover:text-white transition-colors"
-            >
-              Admin (<span className="text-[#d4af37]">admin</span>)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setUsername('beardlounge');
-                setPassword('Beard@123');
-              }}
-              className="text-xs px-2.5 py-1 rounded bg-[#0b0f17] border border-white/10 hover:border-[#d4af37]/40 text-gray-400 hover:text-white transition-colors"
-            >
-              Staff (<span className="text-[#d4af37]">beardlounge</span>)
-            </button>
-          </div>
-        </div>
-
         {/* Location Footer */}
-        <div className="text-center pt-1">
+        <div className="text-center pt-2 border-t border-white/5">
           <p className="text-[11px] text-gray-500 flex items-center justify-center gap-1">
             <ShieldCheck size={12} className="text-[#d4af37]" />
             Beard Lounge &bull; Farwaniya Block 1, Kuwait

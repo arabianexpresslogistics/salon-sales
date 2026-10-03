@@ -102,29 +102,16 @@ export async function login(username: string, password: string): Promise<ApiResp
       return { ...res, role, name, phone };
     }
 
-    // Known Offline Hardcoded Fallbacks
-    if (
-      (cleanUser.toLowerCase() === 'admin' && (cleanPass === 'admin@123' || cleanPass === 'admin')) ||
-      (cleanUser.toLowerCase() === 'beardlounge' && cleanPass === 'Beard@123') ||
-      (cleanUser.toLowerCase() === 'sameer' && cleanPass === 'sameer@123') ||
-      (cleanUser.toLowerCase() === 'arjun' && cleanPass === 'arjun@123')
-    ) {
-      const role = cleanUser.toLowerCase() === 'admin' ? 'Admin' : 'Staff';
-      const nameMap: Record<string, string> = {
-        admin: 'Admin Owner',
-        beardlounge: 'Beard Lounge Staff',
-        sameer: 'Sameer Khan',
-        arjun: 'Arjun Das'
-      };
-      const name = nameMap[cleanUser.toLowerCase()] || cleanUser;
+    // Offline fallback only for primary admin if network is completely unreachable
+    if (cleanUser.toLowerCase() === 'admin' && (cleanPass === 'admin@123' || cleanPass === 'admin')) {
       const fallbackToken = 'BL_SESSION_' + Date.now();
-      persistSession(fallbackToken, role, cleanUser, name, '+965');
+      persistSession(fallbackToken, 'Admin', cleanUser, 'Admin Owner', '+965');
       return {
         success: true,
         token: fallbackToken,
-        role: role,
+        role: 'Admin',
         username: cleanUser,
-        name: name,
+        name: 'Admin Owner',
         phone: '+965'
       };
     }

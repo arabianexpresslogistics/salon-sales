@@ -75,12 +75,7 @@ export const SERVICE_CATEGORIES = [
   'Waxing'
 ] as const;
 
-export const DEFAULT_EMPLOYEES = [
-  { name: 'Sameer Khan', phone: '+965 9876 5432', role: 'Master Barber' },
-  { name: 'Arjun Das', phone: '+965 9876 5433', role: 'Senior Hair Stylist' },
-  { name: 'Rohan Sharma', phone: '+965 9876 5434', role: 'Beard Specialist' },
-  { name: 'Fahad Ali', phone: '+965 9876 5435', role: 'Skin & Spa Therapist' }
-];
+export const DEFAULT_EMPLOYEES: Array<{ name: string; phone?: string; role?: string }> = [];
 
 export const PAYMENT_METHODS = [
   'KNet',

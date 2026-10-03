@@ -146,7 +146,7 @@ export default function HomePage() {
         setAllVisits(clean);
       }
 
-      if (empRes?.employees && Array.isArray(empRes.employees) && empRes.employees.length > 0) {
+      if (empRes?.employees && Array.isArray(empRes.employees)) {
         setEmployeeList(empRes.employees);
       }
     } catch (e) {
@@ -764,12 +764,16 @@ export default function HomePage() {
                         onChange={(e) => setStylist(e.target.value)}
                         className="w-full px-3 py-2 text-xs bg-[#0b0f17] border border-white/10 rounded-lg focus:border-[#d4af37] text-white focus:outline-none"
                       >
-                        {employeeList.map((emp, i) => {
-                          const name = emp.name || emp['Employee Name'];
-                          return (
-                            <option key={i} value={name}>{name}</option>
-                          );
-                        })}
+                        {employeeList.length === 0 ? (
+                          <option value={currentUser?.name || 'Admin'}>{currentUser?.name || 'Admin'}</option>
+                        ) : (
+                          employeeList.map((emp, i) => {
+                            const name = emp.name || emp['Employee Name'];
+                            return (
+                              <option key={i} value={name}>{name}</option>
+                            );
+                          })
+                        )}
                       </select>
                     ) : (
                       <div className="w-full px-3 py-2 text-xs bg-[#0b0f17] border border-[#d4af37]/40 rounded-lg text-[#f5cf68] font-medium flex items-center justify-between">
