@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, getStoredUser } from '@/lib/salonApi';
+import { SalonLogo } from '@/components/SalonLogo';
+import { Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,7 +35,7 @@ export default function LoginPage() {
       if (res.success) {
         router.push('/');
       } else {
-        setError(res.error || 'Invalid credentials');
+        setError(res.error || 'Invalid username or password');
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');
@@ -43,25 +45,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
-      <div className="w-full max-w-sm bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">
-            Beard Lounge
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">Premium Salon &bull; Sign in to continue</p>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0b0f17]">
+      <div className="w-full max-w-sm bg-[#111622] border border-white/10 rounded-xl p-6 md:p-8 space-y-6">
+        
+        {/* Salon Logo */}
+        <div className="flex flex-col items-center text-center">
+          <SalonLogo size="md" showSubtitle={true} showLocation={true} centered={true} />
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-600">
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400 text-center">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Username
+            <label className="block text-[11px] font-medium uppercase tracking-wider text-[#d4af37] mb-1.5 flex items-center gap-1.5">
+              <User size={13} /> Username
             </label>
             <input
               type="text"
@@ -69,13 +70,13 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
-              className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-[#0b0f17] border border-white/10 rounded-lg focus:outline-none focus:border-[#d4af37] text-white placeholder:text-gray-600 transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Password
+            <label className="block text-[11px] font-medium uppercase tracking-wider text-[#d4af37] mb-1.5 flex items-center gap-1.5">
+              <Lock size={13} /> Password
             </label>
             <input
               type="password"
@@ -83,43 +84,62 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-[#0b0f17] border border-white/10 rounded-lg focus:outline-none focus:border-[#d4af37] text-white placeholder:text-gray-600 transition-colors"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full py-2.5 px-4 bg-[#d4af37] hover:bg-[#c49f27] text-[#0b0f17] font-semibold text-xs tracking-wider uppercase rounded-lg transition-colors flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (
+              <span>Authorizing...</span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                Sign In <ArrowRight size={14} />
+              </span>
+            )}
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs">
-          <button
-            type="button"
-            onClick={() => {
-              setUsername('admin');
-              setPassword('admin@123');
-            }}
-            className="text-slate-500 hover:text-slate-900 underline transition-colors"
-          >
-            Admin (<strong>admin</strong>)
-          </button>
-          <span className="text-slate-300">&bull;</span>
-          <button
-            type="button"
-            onClick={() => {
-              setUsername('beardlounge');
-              setPassword('Beard@123');
-            }}
-            className="text-slate-500 hover:text-slate-900 underline transition-colors"
-          >
-            Staff (<strong>beardlounge</strong>)
-          </button>
+        {/* Quick Logins */}
+        <div className="pt-4 border-t border-white/10 text-center space-y-2">
+          <span className="text-[10px] text-gray-500 uppercase tracking-widest block">Quick Demo Login</span>
+          <div className="flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setUsername('admin');
+                setPassword('admin@123');
+              }}
+              className="text-xs px-2.5 py-1 rounded bg-[#0b0f17] border border-white/10 hover:border-[#d4af37]/40 text-gray-400 hover:text-white transition-colors"
+            >
+              Admin (<span className="text-[#d4af37]">admin</span>)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setUsername('beardlounge');
+                setPassword('Beard@123');
+              }}
+              className="text-xs px-2.5 py-1 rounded bg-[#0b0f17] border border-white/10 hover:border-[#d4af37]/40 text-gray-400 hover:text-white transition-colors"
+            >
+              Staff (<span className="text-[#d4af37]">beardlounge</span>)
+            </button>
+          </div>
+        </div>
+
+        {/* Location Footer */}
+        <div className="text-center pt-1">
+          <p className="text-[11px] text-gray-500 flex items-center justify-center gap-1">
+            <ShieldCheck size={12} className="text-[#d4af37]" />
+            Beard Lounge &bull; Farwaniya Block 1, Kuwait
+          </p>
         </div>
       </div>
     </div>
   );
 }
+
+

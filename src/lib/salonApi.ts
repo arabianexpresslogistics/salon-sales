@@ -2,7 +2,7 @@ import { ApiResponse, VisitData, EmployeeData, UserSession } from '@/types/salon
 
 const DEFAULT_SCRIPT_URL =
   process.env.NEXT_PUBLIC_SALON_SCRIPT_URL ||
-  'https://script.google.com/macros/s/AKfycbwEuCOplc2fUcKNkjTKHXhFk4Lc0yH5Cz4Gj6k_LR-b7BzsrrSd5WRryRRtFKc3HBhs1Q/exec';
+  'https://script.google.com/macros/s/AKfycbzZjA-N5WMD-Ow6wnnjrg3vXnC95LnEezHrRpJG62u-5JBbLomyJlx0uF6aiB9NY_juLg/exec';
 
 export function getScriptUrl(): string {
   return DEFAULT_SCRIPT_URL;
@@ -42,11 +42,11 @@ async function postToApi(payload: Record<string, any>): Promise<ApiResponse> {
 
   const bodyData = {
     ...payload,
-    token: token || 'BL_ADMIN_SESSION',
+    token: token || 'BL_SESSION',
   };
 
   try {
-    // 1. First try our Next.js API route proxy (resolves Google 302 redirects cleanly)
+    // 1. First try Next.js API proxy
     const res = await fetch('/api/salon', {
       method: 'POST',
       headers: {
@@ -78,7 +78,7 @@ async function postToApi(payload: Record<string, any>): Promise<ApiResponse> {
     console.error('Direct POST error:', error);
     return {
       success: false,
-      error: error.message || 'Unable to connect to Google Sheets. Check your network or script URL.',
+      error: error.message || 'Unable to connect to Google Sheets.',
     };
   }
 }
@@ -94,46 +94,43 @@ export async function login(username: string, password: string): Promise<ApiResp
       password: cleanPass,
     });
 
-    const determinedRole = cleanUser.toLowerCase() === 'admin' ? 'Admin' : (cleanUser.toLowerCase() === 'beardlounge' ? 'Staff' : (res.role || 'Staff'));
-
     if (res.success && res.token) {
-      persistSession(res.token, determinedRole, res.username || cleanUser);
-      return { ...res, role: determinedRole };
+      const role = res.role || (cleanUser.toLowerCase() === 'admin' ? 'Admin' : 'Staff');
+      const name = res.name || (cleanUser.toLowerCase() === 'admin' ? 'Admin Owner' : 'Staff Member');
+      const phone = res.phone || '+965';
+      persistSession(res.token, role, res.username || cleanUser, name, phone);
+      return { ...res, role, name, phone };
     }
 
-    // Fallback if Apps Script returns error or offline
+    // Known Offline Hardcoded Fallbacks
     if (
+      (cleanUser.toLowerCase() === 'admin' && (cleanPass === 'admin@123' || cleanPass === 'admin')) ||
       (cleanUser.toLowerCase() === 'beardlounge' && cleanPass === 'Beard@123') ||
-      (cleanUser.toLowerCase() === 'admin' && cleanPass === 'admin@123') ||
-      (cleanUser.toLowerCase() === 'admin' && cleanPass === 'beardlounge2026')
+      (cleanUser.toLowerCase() === 'sameer' && cleanPass === 'sameer@123') ||
+      (cleanUser.toLowerCase() === 'arjun' && cleanPass === 'arjun@123')
     ) {
+      const role = cleanUser.toLowerCase() === 'admin' ? 'Admin' : 'Staff';
+      const nameMap: Record<string, string> = {
+        admin: 'Admin Owner',
+        beardlounge: 'Beard Lounge Staff',
+        sameer: 'Sameer Khan',
+        arjun: 'Arjun Das'
+      };
+      const name = nameMap[cleanUser.toLowerCase()] || cleanUser;
       const fallbackToken = 'BL_SESSION_' + Date.now();
-      persistSession(fallbackToken, determinedRole, cleanUser);
+      persistSession(fallbackToken, role, cleanUser, name, '+965');
       return {
         success: true,
         token: fallbackToken,
-        role: determinedRole,
+        role: role,
         username: cleanUser,
+        name: name,
+        phone: '+965'
       };
     }
 
     return res;
   } catch (err: any) {
-    const determinedRole = cleanUser.toLowerCase() === 'admin' ? 'Admin' : 'Staff';
-    if (
-      (cleanUser.toLowerCase() === 'beardlounge' && cleanPass === 'Beard@123') ||
-      (cleanUser.toLowerCase() === 'admin' && cleanPass === 'admin@123') ||
-      (cleanUser.toLowerCase() === 'admin' && cleanPass === 'beardlounge2026')
-    ) {
-      const fallbackToken = 'BL_SESSION_' + Date.now();
-      persistSession(fallbackToken, determinedRole, cleanUser);
-      return {
-        success: true,
-        token: fallbackToken,
-        role: determinedRole,
-        username: cleanUser,
-      };
-    }
     return {
       success: false,
       error: err.message || 'Authentication service unreachable',
@@ -141,26 +138,38 @@ export async function login(username: string, password: string): Promise<ApiResp
   }
 }
 
-function persistSession(token: string, role: string, username: string) {
+function persistSession(token: string, role: string, username: string, name: string, phone?: string) {
   if (typeof window !== 'undefined') {
     sessionStorage.setItem('salonToken', token);
     sessionStorage.setItem('salonRole', role);
     sessionStorage.setItem('salonUser', username);
+    sessionStorage.setItem('salonName', name);
+    sessionStorage.setItem('salonPhone', phone || '+965');
 
     localStorage.setItem('salonToken', token);
     localStorage.setItem('salonRole', role);
     localStorage.setItem('salonUser', username);
+    localStorage.setItem('salonName', name);
+    localStorage.setItem('salonPhone', phone || '+965');
   }
 }
 
 export async function fetchVisits(): Promise<ApiResponse<VisitData>> {
+  const user = getStoredUser();
   const scriptUrl = getScriptUrl();
 
+  const queryParams = new URLSearchParams({
+    action: 'getVisits',
+    username: user?.username || '',
+    role: user?.role || 'Staff',
+    employeeName: user?.name || '',
+  });
+
   try {
-    const res = await fetch('/api/salon', {
+    const res = await fetch(`/api/salon?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
-        'x-custom-script-url': scriptUrl,
+        'x-custom-script-url': `${scriptUrl}?${queryParams.toString()}`,
       },
       cache: 'no-store',
     });
@@ -172,7 +181,7 @@ export async function fetchVisits(): Promise<ApiResponse<VisitData>> {
   }
 
   try {
-    const res = await fetch(scriptUrl, { cache: 'no-store' });
+    const res = await fetch(`${scriptUrl}?${queryParams.toString()}`, { cache: 'no-store' });
     return await res.json();
   } catch (err: any) {
     return { success: false, error: err.message, visits: [] };
@@ -180,23 +189,34 @@ export async function fetchVisits(): Promise<ApiResponse<VisitData>> {
 }
 
 export async function fetchEmployees(): Promise<ApiResponse> {
-  return postToApi({ action: 'getEmployees' });
+  const user = getStoredUser();
+  return postToApi({ 
+    action: 'getEmployees',
+    username: user?.username || '',
+    role: user?.role || 'Staff'
+  });
 }
 
 export async function addVisit(data: VisitData): Promise<ApiResponse> {
-  return postToApi({ action: 'addVisit', data });
-}
-
-export async function updateVisit(billNo: string, data: Partial<VisitData>): Promise<ApiResponse> {
-  return postToApi({ action: 'updateVisit', billNo, data });
-}
-
-export async function deleteVisit(billNo: string): Promise<ApiResponse> {
-  return postToApi({ action: 'deleteVisit', billNo });
+  const user = getStoredUser();
+  const enhancedData: VisitData = {
+    ...data,
+    "Employee Name": data["Employee Name"] || user?.name || user?.username || "Staff",
+    "Created By": user?.username || "Staff",
+  };
+  return postToApi({ action: 'addVisit', data: enhancedData });
 }
 
 export async function addEmployee(data: EmployeeData): Promise<ApiResponse> {
   return postToApi({ action: 'addEmployee', data });
+}
+
+export async function deleteEmployee(username: string, name?: string): Promise<ApiResponse> {
+  return postToApi({ action: 'deleteEmployee', username, name });
+}
+
+export async function deleteVisit(billNo: string): Promise<ApiResponse> {
+  return postToApi({ action: 'deleteVisit', billNo });
 }
 
 export function isAdmin(): boolean {
@@ -209,20 +229,22 @@ export function getStoredUser(): UserSession | null {
   if (typeof window === 'undefined') return null;
   const token = sessionStorage.getItem('salonToken') || localStorage.getItem('salonToken');
   const username = sessionStorage.getItem('salonUser') || localStorage.getItem('salonUser');
-  const role = sessionStorage.getItem('salonRole') || localStorage.getItem('salonRole') || 'Admin';
+  const name = sessionStorage.getItem('salonName') || localStorage.getItem('salonName') || username || 'Staff Member';
+  const role = sessionStorage.getItem('salonRole') || localStorage.getItem('salonRole') || 'Staff';
+  const phone = sessionStorage.getItem('salonPhone') || localStorage.getItem('salonPhone') || '+965';
 
   if (!token || !username) return null;
-  return { token, username, role };
+  return { token, username, name, role, phone };
 }
 
 export function logout(): void {
   if (typeof window !== 'undefined') {
-    sessionStorage.removeItem('salonToken');
-    sessionStorage.removeItem('salonRole');
-    sessionStorage.removeItem('salonUser');
-
+    sessionStorage.clear();
     localStorage.removeItem('salonToken');
     localStorage.removeItem('salonRole');
     localStorage.removeItem('salonUser');
+    localStorage.removeItem('salonName');
+    localStorage.removeItem('salonPhone');
   }
 }
+

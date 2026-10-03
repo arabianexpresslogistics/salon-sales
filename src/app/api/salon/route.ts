@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const FALLBACK_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEuCOplc2fUcKNkjTKHXhFk4Lc0yH5Cz4Gj6k_LR-b7BzsrrSd5WRryRRtFKc3HBhs1Q/exec';
+const FALLBACK_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZjA-N5WMD-Ow6wnnjrg3vXnC95LnEezHrRpJG62u-5JBbLomyJlx0uF6aiB9NY_juLg/exec';
 
 function getScriptUrl(req: NextRequest): string {
   const customUrl = req.headers.get('x-custom-script-url');
@@ -12,9 +12,14 @@ function getScriptUrl(req: NextRequest): string {
 
 // GET: Fetch visits from Google Sheet
 export async function GET(request: NextRequest) {
-  const scriptUrl = getScriptUrl(request);
+  let targetUrl = getScriptUrl(request);
+  const searchParams = request.nextUrl.search;
+  if (searchParams && !targetUrl.includes('?')) {
+    targetUrl += searchParams;
+  }
+
   try {
-    const response = await fetch(scriptUrl, {
+    const response = await fetch(targetUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -22,6 +27,7 @@ export async function GET(request: NextRequest) {
       cache: 'no-store',
       redirect: 'follow',
     });
+
 
     if (response.status === 401) {
       return NextResponse.json(

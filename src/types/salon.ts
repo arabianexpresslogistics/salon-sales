@@ -1,30 +1,43 @@
 // Salon Data Types
 
 export interface VisitData {
-  "Bill No": string;
+  "Bill No"?: string;
   "Date": string; // YYYY-MM-DD
-  "Time": string; // e.g. 10:30 AM
+  "Time"?: string; // e.g. 10:30 AM
   "Customer Name": string;
-  "Phone Number": string;
-  "Gender / Category": string; // Men, Kids, VIP, Groom
-  "Services": string; // Comma separated or string
-  "Stylist / Barber": string;
-  "Payment Method": "Cash" | "UPI / GPay" | "Credit/Debit Card" | "Salon Pass" | "Other";
-  "Total Amount (₹)": number;
-  "Discount (₹)": number;
-  "Final Amount (₹)": number;
+  "Phone Number"?: string;
+  "Gender / Category"?: string; // Men, Kids, VIP, Groom
+  "Service"?: string;
+  "Services"?: string; // Comma separated or string
+  "Stylist / Barber"?: string;
+  "Employee Name"?: string;
+  "Payment Method"?: "KNet" | "Cash" | "Credit/Debit Card" | "Apple Pay" | "Salon Pass" | "Other" | string;
+  "Amount"?: number;
+  "Total Amount (KD)"?: number;
+  "Discount (KD)"?: number;
+  "Final Amount (KD)"?: number;
   "Notes / Preference"?: string;
-  "Status": "Completed" | "In-Service" | "Booked";
+  "Note"?: string;
+  "Created By"?: string;
+  "Status"?: "Completed" | "In-Service" | "Booked";
   "Timestamp"?: string;
   [key: string]: any;
 }
 
 export interface EmployeeData {
   "Employee Name": string;
-  "Phone Number": string;
+  "Username"?: string;
+  "Password"?: string;
   "Role": string;
+  "Phone Number": string;
   "Joining Date": string;
   "Status": "Active" | "Inactive";
+  name?: string;
+  username?: string;
+  password?: string;
+  phone?: string;
+  role?: string;
+  joiningDate?: string;
   [key: string]: any;
 }
 
@@ -33,6 +46,8 @@ export interface ApiResponse<T = any> {
   token?: string;
   role?: string;
   username?: string;
+  name?: string;
+  phone?: string;
   visits?: VisitData[];
   employees?: EmployeeData[];
   billNo?: string;
@@ -43,8 +58,18 @@ export interface ApiResponse<T = any> {
 export interface SalonServiceItem {
   id: string;
   name: string;
-  category: 'Hair' | 'Beard' | 'Spa & Facial' | 'Package' | 'Color & Texture';
-  price: number;
+  category: 
+    | 'Hair & Beard' 
+    | 'Colouring' 
+    | 'Face & Skin Care' 
+    | 'Hair Care' 
+    | 'Hair Treatment' 
+    | 'Hair Styling' 
+    | 'Hand & Foot Care' 
+    | 'Waxing'
+    | 'Package'
+    | 'Other';
+  price: number; // in KD
   durationMin: number;
   popular?: boolean;
 }
@@ -52,5 +77,9 @@ export interface SalonServiceItem {
 export interface UserSession {
   token: string;
   username: string;
+  name: string;
   role: string;
+  phone?: string;
 }
+
+

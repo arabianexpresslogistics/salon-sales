@@ -1,44 +1,92 @@
 import { SalonServiceItem } from '@/types/salon';
 
+export const SALON_INFO = {
+  name: 'Beard Lounge',
+  tagline: "A Touch of Luxury in Every Style.",
+  motto: 'YOUR LOOK. YOUR STYLE. YOUR LOUNGE.',
+  subtitle: "Premium Men's Salon",
+  address: 'Farwaniya Block 1, Mobile 2000 Building, M1 Floor',
+  country: 'Kuwait',
+  currency: 'KD',
+  currencySymbol: 'KD',
+};
+
 export const SALON_SERVICES: SalonServiceItem[] = [
-  // Hair
-  { id: 'hair_cut', name: 'Signature Haircut & Style', category: 'Hair', price: 350, durationMin: 30, popular: true },
-  { id: 'hair_fade', name: 'Skin Fade / Taper Fade Cut', category: 'Hair', price: 450, durationMin: 40, popular: true },
-  { id: 'hair_kids', name: 'Junior Haircut (Under 12)', category: 'Hair', price: 250, durationMin: 25 },
-  { id: 'hair_wash', name: 'Deep Clean Hair Wash & Blowdry', category: 'Hair', price: 200, durationMin: 15 },
-  
-  // Beard
-  { id: 'beard_trim', name: 'Beard Sculpting & Line-up', category: 'Beard', price: 250, durationMin: 20, popular: true },
-  { id: 'beard_shave', name: 'Royal Hot Towel Shave', category: 'Beard', price: 350, durationMin: 30, popular: true },
-  { id: 'beard_spa', name: 'Beard Oil Spa & Hydration', category: 'Beard', price: 400, durationMin: 25 },
-  { id: 'beard_color', name: 'Natural Beard Color / Camo', category: 'Beard', price: 300, durationMin: 20 },
+  // HAIR & BEARD
+  { id: 'hair_cut', name: 'Hair Cut', category: 'Hair & Beard', price: 1, durationMin: 30, popular: true },
+  { id: 'trimming', name: 'Trimming', category: 'Hair & Beard', price: 1, durationMin: 20, popular: true },
+  { id: 'shaving', name: 'Shaving', category: 'Hair & Beard', price: 1, durationMin: 25, popular: true },
+  { id: 'baby_hair_cut', name: 'Baby Hair Cut', category: 'Hair & Beard', price: 2, durationMin: 25 },
 
-  // Facial & Spa
-  { id: 'spa_detan', name: 'Charcoal De-Tan & Face Scrub', category: 'Spa & Facial', price: 500, durationMin: 30, popular: true },
-  { id: 'spa_facial', name: 'Hydra Glow Executive Facial', category: 'Spa & Facial', price: 1200, durationMin: 45 },
-  { id: 'spa_massage', name: 'Ayurvedic Head & Shoulder Massage (20m)', category: 'Spa & Facial', price: 400, durationMin: 20 },
-  { id: 'spa_hair', name: 'Anti-Dandruff / Keratin Hair Spa', category: 'Spa & Facial', price: 900, durationMin: 45 },
+  // COLOURING
+  { id: 'hair_bleach', name: 'Hair Bleach', category: 'Colouring', price: 3, durationMin: 35 },
+  { id: 'hair_coloring_strip', name: 'Hair Coloring Strip', category: 'Colouring', price: 1, durationMin: 20 },
+  { id: 'hair_coloring', name: 'Hair Coloring', category: 'Colouring', price: 5, durationMin: 45, popular: true },
+  { id: 'hair_dye', name: 'Hair Dye', category: 'Colouring', price: 1, durationMin: 25 },
+  { id: 'beard_dye', name: 'Beard Dye', category: 'Colouring', price: 1, durationMin: 20, popular: true },
+  { id: 'perm_bold_style', name: 'Permanent Bold Style', category: 'Colouring', price: 12, durationMin: 60 },
 
-  // Color & Texture
-  { id: 'color_hair', name: 'Full Hair Color (Ammonia Free)', category: 'Color & Texture', price: 800, durationMin: 40 },
-  { id: 'hair_straight', name: 'Hair Smoothening / Straightening', category: 'Color & Texture', price: 2500, durationMin: 90 },
+  // FACE & SKIN CARE
+  { id: 'face_cleaning', name: 'Face Cleaning', category: 'Face & Skin Care', price: 1, durationMin: 20, popular: true },
+  { id: 'normal_facial', name: 'Normal Facial', category: 'Face & Skin Care', price: 3, durationMin: 30 },
+  { id: 'papaya_facial', name: 'Papaya Facial', category: 'Face & Skin Care', price: 5, durationMin: 40 },
+  { id: 'gold_facial', name: 'Gold Facial', category: 'Face & Skin Care', price: 6, durationMin: 45, popular: true },
+  { id: 'diamond_facial', name: 'Diamond Facial', category: 'Face & Skin Care', price: 8, durationMin: 50 },
+  { id: 'face_bleach', name: 'Face Bleach', category: 'Face & Skin Care', price: 1.5, durationMin: 25 },
+  { id: 'face_bleach_cleanse', name: 'Face Bleach & Cleanse', category: 'Face & Skin Care', price: 2, durationMin: 30 },
+  { id: 'face_massage', name: 'Face Massage', category: 'Face & Skin Care', price: 2, durationMin: 20 },
+  { id: 'neck_bleach', name: 'Neck Bleach', category: 'Face & Skin Care', price: 2, durationMin: 20 },
+  { id: 'detan', name: 'Detan', category: 'Face & Skin Care', price: 3, durationMin: 30, popular: true },
 
-  // Packages
-  { id: 'pkg_groom', name: 'Executive Groom Package (Cut + Beard + DeTan + Wash)', category: 'Package', price: 1400, durationMin: 75, popular: true },
-  { id: 'pkg_vip', name: 'Royal VIP Experience (Cut + Shave + Facial + Hair Spa)', category: 'Package', price: 2500, durationMin: 105 }
+  // HAIR CARE
+  { id: 'oil_head_massage', name: 'Oil Head Massage', category: 'Hair Care', price: 1, durationMin: 20, popular: true },
+  { id: 'normal_hair_spa', name: 'Normal Hair Spa', category: 'Hair Care', price: 5, durationMin: 40 },
+  { id: 'dandruff_hair_spa', name: 'Dandruff Hair Spa', category: 'Hair Care', price: 10, durationMin: 45 },
+  { id: 'hair_smoothing', name: 'Hair Smoothing', category: 'Hair Care', price: 10, durationMin: 60 },
+
+  // HAIR TREATMENT
+  { id: 'hair_keratin', name: 'Hair Keratin', category: 'Hair Treatment', price: 20, durationMin: 90, popular: true },
+  { id: 'hair_nanoplastia', name: 'Hair Nanoplastia', category: 'Hair Treatment', price: 25, durationMin: 120 },
+  { id: 'hair_straightening', name: 'Hair Straightening', category: 'Hair Treatment', price: 7, durationMin: 60 },
+
+  // HAIR STYLING
+  { id: 'hair_washing', name: 'Hair Washing', category: 'Hair Styling', price: 3, durationMin: 15 },
+  { id: 'hair_styling', name: 'Hair Styling', category: 'Hair Styling', price: 3, durationMin: 20 },
+  { id: 'hair_filling', name: 'Hair Filling', category: 'Hair Styling', price: 3, durationMin: 25 },
+
+  // HAND & FOOT CARE
+  { id: 'basic_pedicure', name: 'Basic Pedicure', category: 'Hand & Foot Care', price: 5, durationMin: 35 },
+  { id: 'premium_pedicure', name: 'Premium Pedicure', category: 'Hand & Foot Care', price: 8, durationMin: 50, popular: true },
+  { id: 'manicure_bleach', name: 'Manicure & Bleach', category: 'Hand & Foot Care', price: 4, durationMin: 40 },
+
+  // WAXING
+  { id: 'nose_ear_waxing', name: 'Nose & Ear Waxing', category: 'Waxing', price: 3, durationMin: 15, popular: true },
 ];
 
+export const SERVICE_CATEGORIES = [
+  'All',
+  'Hair & Beard',
+  'Colouring',
+  'Face & Skin Care',
+  'Hair Care',
+  'Hair Treatment',
+  'Hair Styling',
+  'Hand & Foot Care',
+  'Waxing'
+] as const;
+
 export const DEFAULT_EMPLOYEES = [
-  { name: 'Sameer Khan', phone: '+91 98765 43210', role: 'Master Barber' },
-  { name: 'Arjun Das', phone: '+91 98765 43211', role: 'Senior Hair Stylist' },
-  { name: 'Rohan Sharma', phone: '+91 98765 43212', role: 'Beard Specialist' },
-  { name: 'Fahad Ali', phone: '+91 98765 43213', role: 'Skin & Spa Therapist' }
+  { name: 'Sameer Khan', phone: '+965 9876 5432', role: 'Master Barber' },
+  { name: 'Arjun Das', phone: '+965 9876 5433', role: 'Senior Hair Stylist' },
+  { name: 'Rohan Sharma', phone: '+965 9876 5434', role: 'Beard Specialist' },
+  { name: 'Fahad Ali', phone: '+965 9876 5435', role: 'Skin & Spa Therapist' }
 ];
 
 export const PAYMENT_METHODS = [
-  'UPI / GPay',
+  'KNet',
   'Cash',
   'Credit/Debit Card',
+  'Apple Pay',
   'Salon Pass',
   'Other'
 ];
@@ -50,3 +98,4 @@ export const CUSTOMER_CATEGORIES = [
   'Groom / Special Occasion',
   'Kids'
 ];
+
